@@ -1,0 +1,25 @@
+.sheduleGrid{
+    display: grid;
+    grid-template-columns: 120px repeat(6, 1fr);
+    grid-template-rows: 40px repeat(6, 80px);
+    border: 1px solid #ddd;
+}
+
+.null{
+    border: 1px solid #ddd
+}
+
+.sheduleColumns, .sheduleRows{
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.sheduleElement{
+    border: 1px solid #ddd;
+    padding: 4;
+}
+
+
