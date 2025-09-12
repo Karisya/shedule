@@ -3,12 +3,22 @@ import React from "react"
 
 const { TextArea } = Input;
 
-const ModalWindow:React.FC=()=>{
+interface ModalWindowProps{
+  day?:string;
+  slot?:string;
+  onClose:()=>void
+}
 
+const ModalWindow:React.FC<ModalWindowProps>=({day, slot, onClose})=>{
 
     return(
     <>
-    <Modal>
+    <Modal 
+      title={`Добавить занятие на ${day} ${slot}?`}
+      onCancel={onClose}
+      open={true}
+      >
+      <p></p>
         <Form
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
