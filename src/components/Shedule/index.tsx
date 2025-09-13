@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Card } from "antd";
+import React, { useEffect, useState } from "react";
+import { Button, Card, Popover } from "antd";
 import './style.css'
 import ModalWindow from "../Modal";
 import scheduleData from "../../data/shedule.json";
@@ -16,8 +16,6 @@ interface ScheduleEvent {
   comment:string;
 }
 
-
-
 const days = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница","Суббота"];
 const slots = ["09:00-10:20", "10:30-11:50", "12:00-13:20", "13:50-15:10", "15:20-16:40","17:00-18:20" ];
 
@@ -27,11 +25,26 @@ const ScheduleGrid: React.FC = () => {
 
   const [isOpen, setIsOpen]=useState(false)
   const [selectedElement, setSelectedElement]=useState<{day:string, slot:string}|null>(null)
- const [events, setEvents] = useState<ScheduleEvent[]>(scheduleData.events);
+  const [events, setEvents] = useState<ScheduleEvent[]>(() => {
+    const saved = localStorage.getItem("scheduleEvents");
+    return saved ? JSON.parse(saved) : scheduleData.events;
+  });
+
+  useEffect(()=>{
+    localStorage.setItem("scheduleEvents", JSON.stringify(events))
+  },[events])
+
+  console.log(events)
 
   const handleClick=(day:string, slot:string)=>{
-    setSelectedElement({day, slot})
-    setIsOpen(true)
+    const exist=events.find((ev)=>ev.day===day && ev.slot===slot )
+    if(!exist){
+      setSelectedElement({day, slot})
+      setIsOpen(true)
+    }
+    else{
+      setIsOpen(true)
+    }
   }
 
    const handleSave = (newEvent: Omit<ScheduleEvent, "id">) => {
@@ -60,11 +73,29 @@ const ScheduleGrid: React.FC = () => {
             <div className='sheduleElement' onClick={()=>{handleClick(day,slot)}}>
               {events
                 .filter((e) => e.day === day && e.slot === slot)
-                .map((ev) => (
-                  <Card key={ev.id} size="small" >
-                    {ev.title}
-                  </Card>
-                ))}
+                .map((ev)=>{
+                  const content=(
+                    <div>
+                    <Button>
+                  Редактировать
+                  </Button>
+                    <Button 
+                      onClick={()=>{setEvents((prev)=>prev.filter((it)=>it.id!==ev.id))}}>
+                  Удалить
+                  </Button>
+                  </div>
+                  )
+                  return (<Popover content={content}>
+                  <div key={ev.id} className="sheduleEvent">
+                    {ev.subject && <p>{ev.subject}</p>}
+                    {ev.type && <p>{ev.type}</p>}
+                    {ev.teacher && <p>{ev.teacher}</p>}
+                    {ev.room && <p>{ev.room}</p>}
+                  </div>
+                  </Popover>
+                  )
+                })
+            }
             </div>
           ))}
         </React.Fragment>

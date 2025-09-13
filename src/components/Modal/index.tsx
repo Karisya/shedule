@@ -33,6 +33,7 @@ const ModalWindow:React.FC<ModalWindowProps>=({day, slot, onClose,subjects, teac
   const [form] = Form.useForm();
   const handleOk= async ()=>{
     const values= await form.validateFields();
+    console.log("djhsd", values)
     onSave({...values, day, slot})
     onClose();
   }
@@ -46,33 +47,42 @@ const ModalWindow:React.FC<ModalWindowProps>=({day, slot, onClose,subjects, teac
       onOk={handleOk}
       >
         <Form
+        form={form}
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
         layout="horizontal"
         style={{ maxWidth: 600 }}
       >
-        <Form.Item>
+        <Form.Item 
+          name="subject"
+          rules={[{ required: true, message: "Выберите дисциплину" }]}>
           <Select
             placeholder="Дисциплина"
             options={subjects.map(sub=>({value:sub}))}
             >
           </Select>
         </Form.Item>
-        <Form.Item>
+        <Form.Item
+          name="teacher"
+          rules={[{ required: true, message: "Выберите преподавателя" }]}>
           <Select
             placeholder="Преподаватель"
             options={teachers.map(teach=>({value:teach}))}
             >
           </Select>
         </Form.Item>
-        <Form.Item>
+        <Form.Item
+          name="room"
+          rules={[{ required: true, message: "Выберите аудиторию" }]}>
           <Select
             placeholder="Аудитория"
             options={rooms.map(r=>({value:r}))}
             >
           </Select>
         </Form.Item>
-        <Form.Item>
+        <Form.Item
+          name="type"
+          rules={[{ required: true, message: "Выберите тип занятия" }]}>
           <Select
             placeholder="Тип занятия"
             options={type.map(t=>({value:t}))}

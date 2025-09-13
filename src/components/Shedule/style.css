@@ -1,7 +1,7 @@
 .sheduleGrid{
     display: grid;
     grid-template-columns: 120px repeat(6, 1fr);
-    grid-template-rows: 40px repeat(6, 80px);
+    grid-template-rows: 40px repeat(6, 120px);
     border: 1px solid #ddd;
 }
 
@@ -21,6 +21,17 @@
     border: 1px solid #ddd;
     padding: 4;
     cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
+.sheduleEvent{
+    display: flex;
+    flex-direction: column;
+    font-size: 10px;
+}
+
+.ant-card-body{
+}
 
