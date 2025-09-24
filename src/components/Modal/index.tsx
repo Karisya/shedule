@@ -1,5 +1,5 @@
 import { Modal, Form, Select,  Input } from "antd"
-import React from "react"
+import React, { useEffect } from "react"
 
 const { TextArea } = Input;
 
@@ -24,11 +24,12 @@ interface ModalWindowProps{
   type:string[];
   rooms:string[];
   onSave:(event: Omit<ScheduleEvent, "id">) => void;
+  initialValues?:Partial<ScheduleEvent>;
 }
 
 
 
-const ModalWindow:React.FC<ModalWindowProps>=({day, slot, onClose,subjects, teachers, rooms, type, onSave})=>{
+const ModalWindow:React.FC<ModalWindowProps>=({day, slot, onClose,subjects, teachers, rooms, type, onSave, initialValues})=>{
   
   const [form] = Form.useForm();
   const handleOk= async ()=>{
@@ -38,16 +39,28 @@ const ModalWindow:React.FC<ModalWindowProps>=({day, slot, onClose,subjects, teac
     onClose();
   }
 
+  useEffect(()=>{
+    if(initialValues){
+      form.setFieldValue("initial", initialValues)
+    }else {
+    form.resetFields();
+  }
+}, [initialValues, form]);
+
   return(
     <>
     <Modal 
-      title={`Добавить занятие на ${day} ${slot}?`}
+      title={
+        initialValues?
+        `Редактировать занятие на ${day} ${slot}?`:
+        `Добавить занятие на ${day} ${slot}?`}
       onCancel={onClose}
       open={true}
       onOk={handleOk}
       >
         <Form
         form={form}
+        initialValues={initialValues}
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
         layout="horizontal"

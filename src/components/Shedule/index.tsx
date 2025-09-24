@@ -25,6 +25,7 @@ const ScheduleGrid: React.FC = () => {
 
   const [isOpen, setIsOpen]=useState(false)
   const [selectedElement, setSelectedElement]=useState<{day:string, slot:string}|null>(null)
+  const [editingEvent, setEditingEvent] = useState<ScheduleEvent | null>(null);
   const [events, setEvents] = useState<ScheduleEvent[]>(() => {
     const saved = localStorage.getItem("scheduleEvents");
     return saved ? JSON.parse(saved) : scheduleData.events;
@@ -34,25 +35,36 @@ const ScheduleGrid: React.FC = () => {
     localStorage.setItem("scheduleEvents", JSON.stringify(events))
   },[events])
 
-  console.log(events)
 
-  const handleClick=(day:string, slot:string)=>{
-    const exist=events.find((ev)=>ev.day===day && ev.slot===slot )
-    if(!exist){
-      setSelectedElement({day, slot})
-      setIsOpen(true)
-    }
-    else{
-      setIsOpen(true)
-    }
+const handleClick = (day: string, slot: string) => {
+  const exist = events.find((ev) => ev.day === day && ev.slot === slot);
+  if (!exist) {
+    setSelectedElement({ day, slot });
+    setEditingEvent(null); 
+    setIsOpen(true);
+  } else {
+    setSelectedElement({ day, slot });
+    setEditingEvent(exist); 
+    setIsOpen(true);
   }
+};
 
-   const handleSave = (newEvent: Omit<ScheduleEvent, "id">) => {
-    setEvents((prev) => [
-      ...prev,
-      { id: String(prev.length + 1), ...newEvent }
-    ]);
-  };
+const handleSave = (newEvent: Omit<ScheduleEvent, "id">) => {
+  setEvents((prev) => {
+    const existingIndex = prev.findIndex(
+      (ev) => ev.day === newEvent.day && ev.slot === newEvent.slot
+    );
+    if (existingIndex !== -1) {
+      const updated = [...prev];
+      updated[existingIndex] = { ...updated[existingIndex], ...newEvent };
+      return updated;
+    }
+    return [...prev, { id: String(prev.length + 1), ...newEvent }];
+  });
+
+  setEditingEvent(null);
+  setIsOpen(false);
+};
 
 
 
@@ -76,7 +88,11 @@ const ScheduleGrid: React.FC = () => {
                 .map((ev)=>{
                   const content=(
                     <div>
-                    <Button>
+                    <Button
+                    onClick={()=>{
+                      setSelectedElement({day,slot})
+                      setIsOpen(true)
+                    }}>
                   Редактировать
                   </Button>
                     <Button 
@@ -110,6 +126,7 @@ const ScheduleGrid: React.FC = () => {
      rooms={scheduleData.rooms}
      type={scheduleData.type}
      onSave={handleSave}
+     initialValues={editingEvent || undefined}
      /> }
     </div>
   );
