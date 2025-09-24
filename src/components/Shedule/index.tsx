@@ -96,7 +96,11 @@ const handleSave = (newEvent: Omit<ScheduleEvent, "id">) => {
                   Редактировать
                   </Button>
                     <Button 
-                      onClick={()=>{setEvents((prev)=>prev.filter((it)=>it.id!==ev.id))}}>
+
+                      onClick={(e)=>{
+                        e.stopPropagation()
+                        setEvents((prev)=>prev.filter((it)=>it.id!==ev.id) )
+                      }}>
                   Удалить
                   </Button>
                   </div>
