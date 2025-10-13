@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Popover } from "antd";
 import './style.css'
 import ModalWindow from "../Modal";
 import scheduleData from "../../data/shedule.json";
+import {DndContext, DragEndEvent} from "@dnd-kit/core";
+import DroppableCell from "../DndCell"; 
 
 interface ScheduleEvent {
   id: string;
-  title: string;
+  title?: string;
   day: string;
   slot: string;
   teacher:string;
@@ -66,9 +67,22 @@ const handleSave = (newEvent: Omit<ScheduleEvent, "id">) => {
   setIsOpen(false);
 };
 
+const handleDragEnd = (event: DragEndEvent) => {
+  if (!event.over) return;
+  const overId = String(event.over.id);
+  const [newDay, newSlot] = overId.split("__");
 
+  setEvents((prev) =>
+    prev.map((ev) =>
+      ev.id === event.active.id
+        ? { ...ev, day: newDay, slot: newSlot }
+        : ev
+    )
+  );
+};
 
   return (
+    <DndContext onDragEnd={handleDragEnd}>
     <div className="sheduleGrid">
       <div className="null"></div>
       {days.map((day) => (
@@ -82,41 +96,20 @@ const handleSave = (newEvent: Omit<ScheduleEvent, "id">) => {
             {slot}
           </div>
           {days.map((day) => (
-            <div className='sheduleElement' onClick={()=>{handleClick(day,slot)}}>
-              {events
-                .filter((e) => e.day === day && e.slot === slot)
-                .map((ev)=>{
-                  const content=(
-                    <div>
-                    <Button
-                    onClick={()=>{
-                      setSelectedElement({day,slot})
-                      setIsOpen(true)
-                    }}>
-                  Редактировать
-                  </Button>
-                    <Button 
-
-                      onClick={(e)=>{
-                        e.stopPropagation()
-                        setEvents((prev)=>prev.filter((it)=>it.id!==ev.id) )
-                      }}>
-                  Удалить
-                  </Button>
-                  </div>
-                  )
-                  return (<Popover content={content}>
-                  <div key={ev.id} className="sheduleEvent">
-                    {ev.subject && <p>{ev.subject}</p>}
-                    {ev.type && <p>{ev.type}</p>}
-                    {ev.teacher && <p>{ev.teacher}</p>}
-                    {ev.room && <p>{ev.room}</p>}
-                  </div>
-                  </Popover>
-                  )
-                })
-            }
-            </div>
+            <DroppableCell
+                key={`${day}__${slot}`}
+                id={`${day}__${slot}`}
+                day={day}
+                slot={slot}
+                onClick={()=>handleClick(day,slot)}
+                events={events.filter((e) => e.day === day && e.slot === slot)}
+                onEdit={(ev) => {
+                  setSelectedElement({ day, slot });
+                  setEditingEvent(ev);
+                  setIsOpen(true);
+                }}
+                onDelete={(id) => setEvents((prev) => prev.filter((e) => e.id !== id))}
+              />
           ))}
         </React.Fragment>
       ))}
@@ -133,6 +126,7 @@ const handleSave = (newEvent: Omit<ScheduleEvent, "id">) => {
      initialValues={editingEvent || undefined}
      /> }
     </div>
+    </DndContext>
   );
 };
 

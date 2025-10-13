@@ -1,0 +1,10 @@
+.sheduleElement{
+    position: relative;
+    min-height: 48;
+}
+
+.sheduleElement__click{
+    position:absolute;
+    inset: 0;
+    cursor: pointer;
+}

@@ -1,0 +1,21 @@
+.scheduleElement__item{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f5f5f5;
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: default;
+    user-select: none;
+}
+
+.scheduleElement__content{
+    cursor: grab;
+    flex-grow: 1;
+}
+
+.scheduleElement__button{
+    cursor: pointer;
+    padding: 0 4px;
+    user-select: none;
+}
