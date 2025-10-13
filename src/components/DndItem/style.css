@@ -19,3 +19,18 @@
     padding: 0 4px;
     user-select: none;
 }
+
+.event-lecture {
+  background-color: #9af89d; 
+  color: #fff;
+}
+
+.event-lab {
+  background-color: #83c2f6; 
+  color: #fff;
+}
+
+.event-practice {
+  background-color: #eeb45d; 
+  color: #fff;
+}

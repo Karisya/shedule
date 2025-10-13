@@ -59,7 +59,13 @@ const DraggableItem: React.FC<DraggableItemProps> = ({ event, onEdit, onDelete }
   return (
     <div
       ref={setNodeRef}
-      className="scheduleElement__item"
+      className={`scheduleElement__item ${
+      event.type === "лекция"
+      ? "event-lecture"
+      : event.type === "лабораторные"
+      ? "event-lab"
+      : "event-practice"
+      }`}
       style={style}>
       <div
         {...listeners}
