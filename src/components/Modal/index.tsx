@@ -103,7 +103,7 @@ const ModalWindow:React.FC<ModalWindowProps>=({day, slot, onClose,subjects, teac
           </Select>
         </Form.Item>
        
-        <Form.Item>
+        <Form.Item name="comment">
           <TextArea placeholder="Комментарии" rows={4} />
         </Form.Item>
       </Form>

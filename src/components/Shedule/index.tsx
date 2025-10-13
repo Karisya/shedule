@@ -22,8 +22,6 @@ const slots = ["09:00-10:20", "10:30-11:50", "12:00-13:20", "13:50-15:10", "15:2
 
 
 const ScheduleGrid: React.FC = () => {
-
-
   const [isOpen, setIsOpen]=useState(false)
   const [selectedElement, setSelectedElement]=useState<{day:string, slot:string}|null>(null)
   const [editingEvent, setEditingEvent] = useState<ScheduleEvent | null>(null);
@@ -49,7 +47,6 @@ const handleClick = (day: string, slot: string) => {
     setIsOpen(true);
   }
 };
-
 const handleSave = (newEvent: Omit<ScheduleEvent, "id">) => {
   setEvents((prev) => {
     const existingIndex = prev.findIndex(
@@ -57,14 +54,15 @@ const handleSave = (newEvent: Omit<ScheduleEvent, "id">) => {
     );
     if (existingIndex !== -1) {
       const updated = [...prev];
-      updated[existingIndex] = { ...updated[existingIndex], ...newEvent };
+      updated[existingIndex] = {
+        ...updated[existingIndex],
+        ...newEvent,
+        comment: newEvent.comment !== undefined ? newEvent.comment : updated[existingIndex].comment
+      };
       return updated;
     }
     return [...prev, { id: String(prev.length + 1), ...newEvent }];
   });
-
-  setEditingEvent(null);
-  setIsOpen(false);
 };
 
 const handleDragEnd = (event: DragEndEvent) => {

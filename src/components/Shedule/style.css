@@ -20,7 +20,6 @@
 .sheduleElement{
     border: 1px solid #ddd;
     padding: 4;
-    /* cursor: pointer; */
     display: flex;
     justify-content: center;
     align-items: center;

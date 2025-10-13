@@ -74,6 +74,7 @@ const DraggableItem: React.FC<DraggableItemProps> = ({ event, onEdit, onDelete }
         <p>{event.subject}</p>
         <p>{event.teacher}</p>
         <p>{event.room}</p>
+        {event.comment&&<p><i>{event.comment}</i></p>}
       </div>
       <Popover
         content={menuContent}
