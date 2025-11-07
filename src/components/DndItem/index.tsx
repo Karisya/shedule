@@ -3,18 +3,7 @@ import React, { useState } from "react";
 import { Popover, Button } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import "./style.css"
-
-interface ScheduleEvent {
-  id: string;
-  title?: string;
-  day: string;
-  slot: string;
-  teacher: string;
-  room: string;
-  type: string;
-  subject: string;
-  comment: string;
-}
+import { ScheduleEvent } from "../../info";
 
 interface DraggableItemProps {
   event: ScheduleEvent;

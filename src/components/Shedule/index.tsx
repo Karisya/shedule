@@ -1,25 +1,13 @@
 import React, { useEffect, useState } from "react";
 import './style.css'
 import ModalWindow from "../Modal";
-import scheduleData from "../../data/shedule.json";
+import scheduleData from "../../data/schedule_clean_data.json";
 import {DndContext, DragEndEvent} from "@dnd-kit/core";
 import DroppableCell from "../DndCell"; 
-
-interface ScheduleEvent {
-  id: string;
-  title?: string;
-  day: string;
-  slot: string;
-  teacher:string;
-  room:string;
-  type:string;
-  subject:string;
-  comment:string;
-}
+import { ScheduleEvent } from "../../info";
 
 const days = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница","Суббота"];
 const slots = ["09:00-10:20", "10:30-11:50", "12:00-13:20", "13:50-15:10", "15:20-16:40","17:00-18:20" ];
-
 
 const ScheduleGrid: React.FC = () => {
   const [isOpen, setIsOpen]=useState(false)
@@ -120,6 +108,8 @@ const handleDragEnd = (event: DragEndEvent) => {
      teachers={scheduleData.teachers}
      rooms={scheduleData.rooms}
      type={scheduleData.type}
+     specialties={scheduleData.specialties}
+     departments={scheduleData.departments}
      onSave={handleSave}
      initialValues={editingEvent || undefined}
      /> }

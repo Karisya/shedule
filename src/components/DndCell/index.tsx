@@ -2,18 +2,7 @@ import React from "react";
 import { useDroppable } from "@dnd-kit/core";
 import DraggableItem from "../DndItem"
 import "./style.css"
-
-interface ScheduleEvent {
-  id: string;
-  title?: string;
-  day: string;
-  slot: string;
-  teacher:string;
-  room:string;
-  type:string;
-  subject:string;
-  comment:string;
-}
+import { ScheduleEvent } from "../../info";
 
 interface DroppableCellProps {
   id: string;            
