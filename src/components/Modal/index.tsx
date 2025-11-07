@@ -1,6 +1,12 @@
 import { Modal, Form, Select,  Input } from "antd"
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { ScheduleEvent } from "../../info";
+import scheduleData from "../../data/schedule_clean_data.json";
+type ScheduleData = {
+  subjectTeachers: Record<string, string[]>;
+};
+const subjectTeachers = (scheduleData as unknown as ScheduleData).subjectTeachers;
+
 const { TextArea } = Input;
 
 
@@ -23,6 +29,21 @@ interface ModalWindowProps{
 const ModalWindow:React.FC<ModalWindowProps>=({day, slot, onClose,subjects, teachers, rooms, type,specialties, departments,  onSave, initialValues})=>{
   
   const [form] = Form.useForm();
+  const [filteredTeachers, setFilteredTeachers] = useState<string[]>(teachers);
+
+const handleSubjectChange = (subject: string) => {
+  const map = (scheduleData as any).subjectTeachers;
+  if (map && map[subject]) {
+    setFilteredTeachers(map[subject]);
+  } else {
+    setFilteredTeachers(teachers);
+  }
+
+  form.setFieldValue("teacher", undefined);
+};
+
+
+
   const handleOk= async ()=>{
     const values= await form.validateFields();
     onSave({...values, day, slot})
@@ -69,7 +90,7 @@ const ModalWindow:React.FC<ModalWindowProps>=({day, slot, onClose,subjects, teac
           name="departments"
           rules={[{ required: true, message: "Выберите группу" }]}>
           <Select
-            placeholder="Дисциплина"
+            placeholder="Группа"
             options={departments.map(d=>({value:d}))}
             >
           </Select>
@@ -80,6 +101,7 @@ const ModalWindow:React.FC<ModalWindowProps>=({day, slot, onClose,subjects, teac
           <Select
             placeholder="Дисциплина"
             options={subjects.map(sub=>({value:sub}))}
+            onChange={handleSubjectChange}
             >
           </Select>
         </Form.Item>
@@ -88,7 +110,7 @@ const ModalWindow:React.FC<ModalWindowProps>=({day, slot, onClose,subjects, teac
           rules={[{ required: true, message: "Выберите преподавателя" }]}>
           <Select
             placeholder="Преподаватель"
-            options={teachers.map(teach=>({value:teach}))}
+            options={filteredTeachers.map(teach=>({value:teach}))}
             >
           </Select>
         </Form.Item>
