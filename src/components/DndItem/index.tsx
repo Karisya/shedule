@@ -9,9 +9,10 @@ interface DraggableItemProps {
   event: ScheduleEvent;
   onEdit: (ev: ScheduleEvent) => void;
   onDelete: (id: string) => void;
+  canEdit:boolean;
 }
 
-const DraggableItem: React.FC<DraggableItemProps> = ({ event, onEdit, onDelete }) => {
+const DraggableItem: React.FC<DraggableItemProps> = ({ event, onEdit, onDelete, canEdit }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id: event.id });
   const [open, setOpen] = useState(false);
 
@@ -21,6 +22,9 @@ const DraggableItem: React.FC<DraggableItemProps> = ({ event, onEdit, onDelete }
 
   const menuContent = (
     <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+
+      { canEdit && 
+      (<>
       <Button
         size="small"
         type="link"
@@ -42,6 +46,7 @@ const DraggableItem: React.FC<DraggableItemProps> = ({ event, onEdit, onDelete }
       >
         Удалить
       </Button>
+      </>)}
     </div>
   );
 

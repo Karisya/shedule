@@ -6,5 +6,12 @@
 .sheduleElement__click{
     position:absolute;
     inset: 0;
+}
+
+.edit{
     cursor: pointer;
+}
+
+.read{
+    cursor: default;
 }

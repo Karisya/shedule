@@ -9,7 +9,12 @@ import { ScheduleEvent } from "../../info";
 const days = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница","Суббота"];
 const slots = ["09:00-10:20", "10:30-11:50", "12:00-13:20", "13:50-15:10", "15:20-16:40","17:00-18:20" ];
 
-const ScheduleGrid: React.FC = () => {
+
+interface ScheduleGridProps {
+  role: string;
+}
+
+const ScheduleGrid: React.FC<ScheduleGridProps> = ({ role }) => {
   const [isOpen, setIsOpen]=useState(false)
   const [selectedElement, setSelectedElement]=useState<{day:string, slot:string}|null>(null)
   const [editingEvent, setEditingEvent] = useState<ScheduleEvent | null>(null);
@@ -24,6 +29,7 @@ const ScheduleGrid: React.FC = () => {
 
 
 const handleClick = (day: string, slot: string) => {
+   if (role !== "admin") {
   const exist = events.find((ev) => ev.day === day && ev.slot === slot);
   if (!exist) {
     setSelectedElement({ day, slot });
@@ -34,6 +40,7 @@ const handleClick = (day: string, slot: string) => {
     setEditingEvent(exist); 
     setIsOpen(true);
   }
+}
 };
 const handleSave = (newEvent: Omit<ScheduleEvent, "id">) => {
   setEvents((prev) => {
@@ -67,8 +74,7 @@ const handleDragEnd = (event: DragEndEvent) => {
   );
 };
 
-  return (
-    <DndContext onDragEnd={handleDragEnd}>
+  const gridContent = (
     <div className="sheduleGrid">
       <div className="null"></div>
       {days.map((day) => (
@@ -78,43 +84,55 @@ const handleDragEnd = (event: DragEndEvent) => {
       ))}
       {slots.map((slot) => (
         <React.Fragment key={slot}>
-          <div className="sheduleRows">
-            {slot}
-          </div>
+          <div className="sheduleRows">{slot}</div>
           {days.map((day) => (
             <DroppableCell
-                key={`${day}__${slot}`}
-                id={`${day}__${slot}`}
-                day={day}
-                slot={slot}
-                onClick={()=>handleClick(day,slot)}
-                events={events.filter((e) => e.day === day && e.slot === slot)}
-                onEdit={(ev) => {
+              key={`${day}__${slot}`}
+              id={`${day}__${slot}`}
+              day={day}
+              slot={slot}
+              onClick={() => {
+                if (role === "admin") handleClick(day, slot);
+              }}
+              canEdit={role === "admin"}
+              events={events.filter((e) => e.day === day && e.slot === slot)}
+              onEdit={(ev) => {
+                if (role === "admin") {
                   setSelectedElement({ day, slot });
                   setEditingEvent(ev);
                   setIsOpen(true);
-                }}
-                onDelete={(id) => setEvents((prev) => prev.filter((e) => e.id !== id))}
-              />
+                }
+              }}
+              onDelete={(id) => {
+                if (role === "admin")
+                  setEvents((prev) => prev.filter((e) => e.id !== id));
+              }}
+            />
           ))}
         </React.Fragment>
       ))}
-     { isOpen && 
-     <ModalWindow 
-     day={selectedElement?.day}
-     slot={selectedElement?.slot}
-     onClose={() => setIsOpen(false)}
-     subjects={scheduleData?.subjects}
-     teachers={scheduleData.teachers}
-     rooms={scheduleData.rooms}
-     type={scheduleData.type}
-     specialties={scheduleData.specialties}
-     departments={scheduleData.departments}
-     onSave={handleSave}
-     initialValues={editingEvent || undefined}
-     /> }
+      {isOpen && role === "admin" && (
+        <ModalWindow
+          day={selectedElement?.day}
+          slot={selectedElement?.slot}
+          onClose={() => setIsOpen(false)}
+          subjects={scheduleData?.subjects}
+          teachers={scheduleData.teachers}
+          rooms={scheduleData.rooms}
+          type={scheduleData.type}
+          specialties={scheduleData.specialties}
+          departments={scheduleData.departments}
+          onSave={handleSave}
+          initialValues={editingEvent || undefined}
+        />
+      )}
     </div>
-    </DndContext>
+  );
+
+  return role === "admin" ? (
+    <DndContext onDragEnd={handleDragEnd}>{gridContent}</DndContext>
+  ) : (
+    gridContent
   );
 };
 

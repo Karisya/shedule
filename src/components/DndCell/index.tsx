@@ -12,9 +12,10 @@ interface DroppableCellProps {
   onClick: () => void;                
   onEdit: (ev: ScheduleEvent) => void; 
   onDelete: (id: string) => void;
+  canEdit:boolean;
 }
 
-const DroppableCell: React.FC<DroppableCellProps> = ({ id, events, onClick, onEdit, onDelete }) => {
+const DroppableCell: React.FC<DroppableCellProps> = ({ id, events, onClick, onEdit, onDelete , canEdit}) => {
   const { setNodeRef, isOver } = useDroppable({ id });
 
   return (
@@ -25,11 +26,12 @@ const DroppableCell: React.FC<DroppableCellProps> = ({ id, events, onClick, onEd
       {events.length === 0 && (
         <div
           onClick={onClick}
-          className="sheduleElement__click"
+          className={`sheduleElement__click ${canEdit?"edit":"read"}`}
         />
       )}
       {events.map((ev) => (
-        <DraggableItem key={ev.id} event={ev} onEdit={onEdit} onDelete={onDelete} />
+        <DraggableItem canEdit={canEdit}
+        key={ev.id} event={ev} onEdit={onEdit} onDelete={onDelete} />
       ))}
     </div>
   );
